@@ -1,11 +1,11 @@
 # SSH Keys and other secrets
 *.pem
 *.key
-id_rsa
-id_rsa.pub
+**/id_rsa
+**/id_rsa.pub
 *.ppk
-.env
-.env.*
+**/.ssh/
+private_key*
 
 # Dependencies
 **/node_modules/
