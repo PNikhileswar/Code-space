@@ -1,4 +1,4 @@
-# SSH Keys and other secrets
+# Security and secrets
 *.pem
 *.key
 **/id_rsa
@@ -6,6 +6,14 @@
 *.ppk
 **/.ssh/
 private_key*
+known_hosts
+authorized_keys
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
 
 # Dependencies
 **/node_modules/
@@ -25,6 +33,8 @@ server/build/
 
 # Environment variables
 .env
+.env.*
+*.env
 .env.local
 .env.development.local
 .env.test.local
@@ -51,11 +61,7 @@ yarn-error.log*
 ehthumbs.db
 Thumbs.db
 
-# Optional npm cache directory
+# Cache and temp
 .npm
-
-# Optional eslint cache
 .eslintcache
-
-# Optional REPL history
 .node_repl_history
