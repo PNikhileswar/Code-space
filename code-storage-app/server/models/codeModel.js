@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const codeSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
-        trim: true
+        default: 'Untitled Code'
     },
     code: {
         type: String,
@@ -17,10 +16,7 @@ const codeSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        // Only required for private codes
-        required: function() {
-            return this.public === false;
-        }
+        required: false // CRITICAL FIX: Remove conditional requirement
     },
     isProtected: {
         type: Boolean,
@@ -28,10 +24,7 @@ const codeSchema = new mongoose.Schema({
     },
     secretKey: {
         type: String,
-        // Only required if code is protected
-        required: function() {
-            return this.isProtected === true;
-        }
+        required: false
     },
     createdAt: {
         type: Date,
@@ -42,11 +35,6 @@ const codeSchema = new mongoose.Schema({
         default: true
     }
 });
-
-// Index for faster searches
-codeSchema.index({ title: 1 });
-codeSchema.index({ userId: 1 });
-codeSchema.index({ public: 1 });
 
 const Code = mongoose.model('Code', codeSchema);
 

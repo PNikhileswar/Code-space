@@ -26,14 +26,26 @@ api.interceptors.request.use(config => {
 // Function to save a new code (works for both public and private)
 export const saveCode = async (codeData) => {
   try {
-    // Normalize boolean values
+    // Add extra validation and normalization
+    if (!codeData.code) {
+      throw new Error('Code content is required');
+    }
+    
+    // Normalize boolean values and ensure fields are present
     const normalizedData = {
-      ...codeData,
+      title: codeData.title || 'Untitled Code',
+      code: codeData.code,
+      language: codeData.language || 'javascript',
       public: codeData.public === false ? false : true,
       isProtected: codeData.isProtected === true
     };
     
-    console.log("🔄 Sending normalized save data:", {
+    // Add secretKey only if protected
+    if (normalizedData.isProtected && codeData.secretKey) {
+      normalizedData.secretKey = codeData.secretKey;
+    }
+    
+    console.log("🔄 Sending save request with data:", {
       title: normalizedData.title,
       public: normalizedData.public,
       isProtected: normalizedData.isProtected,
@@ -44,17 +56,18 @@ export const saveCode = async (codeData) => {
     return response.data;
   } catch (error) {
     console.error('❌ Error saving code:', error);
+    
     if (error.response) {
       console.error('Response status:', error.response.status);
       console.error('Response data:', error.response.data);
       
-      // Specific error handling based on status codes
       if (error.response.status === 401) {
         console.error('Authentication error - user not logged in or token expired');
       } else if (error.response.status === 500) {
         console.error('Server error - check backend logs');
       }
     }
+    
     throw error;
   }
 };
