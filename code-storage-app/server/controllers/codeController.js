@@ -56,6 +56,15 @@ exports.saveCode = async (req, res) => {
             });
         } catch (dbError) {
             console.error("❌ Database error:", dbError);
+            
+            // Check for duplicate title error
+            if (dbError.code === 11000 && dbError.keyPattern && dbError.keyPattern.title) {
+                return res.status(400).json({
+                    message: 'A code snippet with this title already exists. Please choose a different title.',
+                    error: 'DuplicateTitle'
+                });
+            }
+            
             return res.status(400).json({
                 message: 'Error saving code to database',
                 details: dbError.message

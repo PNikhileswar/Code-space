@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const codeSchema = new mongoose.Schema({
     title: {
         type: String,
-        default: 'Untitled Code'
+        default: 'Untitled Code',
+        unique: true, // Add unique constraint
+        trim: true    // Trim whitespace for better uniqueness checks
     },
     code: {
         type: String,
@@ -35,6 +37,9 @@ const codeSchema = new mongoose.Schema({
         default: true
     }
 });
+
+// Create index for faster lookups
+codeSchema.index({ title: 1 }, { unique: true });
 
 const Code = mongoose.model('Code', codeSchema);
 

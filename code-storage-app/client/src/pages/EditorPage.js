@@ -145,6 +145,11 @@ const EditorPage = () => {
           type: 'error',
           message: 'Authentication required. Please log in to save private codes.'
         });
+      } else if (error.response?.data?.error === 'DuplicateTitle') {
+        setSaveStatus({
+          type: 'error',
+          message: 'A code snippet with this title already exists. Please choose a different title.'
+        });
       } else {
         setSaveStatus({
           type: 'error',
