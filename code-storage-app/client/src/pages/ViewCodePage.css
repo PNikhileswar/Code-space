@@ -1,0 +1,114 @@
+.view-code-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.view-code-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.view-code-header {
+  margin-bottom: 2rem;
+}
+
+.view-code-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.language-badge {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.date-info {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.protected-code-card, .error-card {
+  background-color: white;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.protected-code-card h2, .error-card h2 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.protected-code-card p, .error-card p {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.key-form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.btn {
+  margin-top: 1rem;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .protected-code-card, .error-card {
+    background-color: var(--dark-card-bg);
+  }
+  
+  .protected-code-card h2, .error-card h2 {
+    color: var(--dark-text-primary);
+  }
+  
+  .protected-code-card p, .error-card p {
+    color: var(--dark-text-secondary);
+  }
+  
+  .language-badge {
+    background-color: rgba(124, 58, 237, 0.2);
+  }
+  
+  .spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}

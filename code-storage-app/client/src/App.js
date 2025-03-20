@@ -1,28 +1,73 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { CodeProvider } from './context/CodeContext';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register';
-import VerifyOTP from './components/Auth/VerifyOTP';
-import Editor from './components/CodeEditor/Editor';
-import CodeList from './components/CodeEditor/CodeList';
+
+// Pages
+import HomePage from './pages/HomePage';
+import EditorPage from './pages/EditorPage';
+import ViewCodePage from './pages/ViewCodePage';
+import ExplorePage from './pages/ExplorePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import MyCodesPage from './pages/MyCodesPage';
+import { isAuthenticated } from './services/authService';
+
+// Styles
+import './styles/global.css';
+
+/**
+ * Private Route Component - Redirects to login if not authenticated
+ */
+const PrivateRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to="/login" />;
+};
+
+/**
+ * Public Route Component - Optionally redirects to editor if logged in
+ */
+const PublicRoute = ({ children, redirect = true }) => {
+  return (!isAuthenticated() || !redirect) ? children : <Navigate to="/editor" />;
+};
 
 function App() {
-    return (
-        <Router>
-            <Header />
-            <Switch>
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-                <Route path="/verify-otp" component={VerifyOTP} />
-                <Route path="/editor" component={Editor} />
-                <Route path="/codes" component={CodeList} />
-                <Route path="/" exact component={CodeList} />
-            </Switch>
-            <Footer />
-        </Router>
-    );
+  return (
+    <CodeProvider>
+      <BrowserRouter>
+        <div className="app">
+          <Header />
+          <main className="main-content">
+            <Routes>
+              {/* Home Page - Always accessible */}
+              <Route path="/" element={<PublicRoute redirect={false}><HomePage /></PublicRoute>} />
+              
+              {/* Authentication Routes */}
+              <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+              <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+              
+              {/* Explore Page - Accessible to everyone */}
+              <Route path="/explore" element={<ExplorePage />} />
+              
+              {/* Code Editor - Accessible to everyone but with different features */}
+              <Route path="/editor" element={<EditorPage />} />
+              <Route path="/editor/:id" element={<EditorPage />} />
+              
+              {/* View Code - Accessible to everyone */}
+              <Route path="/view/:id" element={<ViewCodePage />} />
+              
+              {/* My Saved Codes - Only for authenticated users */}
+              <Route path="/codes" element={<PrivateRoute><MyCodesPage /></PrivateRoute>} />
+              
+              {/* Fallback Route */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </CodeProvider>
+  );
 }
 
 export default App;

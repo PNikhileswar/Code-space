@@ -1,17 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const codeController = require('../controllers/codeController');
+const { authenticate, optional } = require('../middleware/authMiddleware');
 
-// Route to save a new code
-router.post('/codes', codeController.saveCode);
+// Public routes
+router.get('/public', codeController.getAllPublicCodes);
+router.get('/by-title/:title', codeController.getCodeByTitle);
+router.post('/:id', codeController.getCodeById);
+router.get('/search', codeController.searchCodeByTitle);
 
-// Route to get all codes (public access)
-router.get('/codes', codeController.getAllCodes);
+// CRITICAL FIX: Use optional middleware for save route
+router.post('/save', optional, codeController.saveCode);
 
-// Route to get a specific code by ID (authenticated access)
-router.get('/codes/:id', codeController.getCodeById);
-
-// Route to delete a specific code by ID (authenticated access)
-router.delete('/codes/:id', codeController.deleteCodeById);
+// Protected routes
+router.get('/user', authenticate, codeController.getUserCodes);
+router.delete('/:id', authenticate, codeController.deleteCodeById);
 
 module.exports = router;

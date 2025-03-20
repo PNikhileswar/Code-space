@@ -1,0 +1,149 @@
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg);
+  background-color: white;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.editor-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(to right, #7C3AED, #8B5CF6);
+  color: white;
+  gap: 1rem;
+}
+
+.editor-title {
+  font-size: 1.1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  flex: 1;
+  min-width: 150px;
+}
+
+.editor-title::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.editor-title:focus {
+  outline: none;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.language-selector {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.save-button {
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.save-button.saving {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.editor-wrapper {
+  position: relative;
+  height: 400px;
+}
+
+.code-editor {
+  font-family: var(--font-code);
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border: none;
+  resize: none;
+  background-color: #252b37;
+  color: #e0e0e0;
+}
+
+.code-editor:focus {
+  outline: none;
+}
+
+.editor-message {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 0;
+}
+
+.editor-message.success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+  border-left: 4px solid #10B981;
+}
+
+.editor-message.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  border-left: 4px solid #EF4444;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .editor-container {
+    background-color: var(--dark-card-bg);
+  }
+
+  .code-editor {
+    background-color: #1a1e2a;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .editor-actions {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .language-selector,
+  .save-button {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .editor-wrapper {
+    height: 300px;
+  }
+}
