@@ -233,3 +233,22 @@ exports.getCodeByTitle = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving code', error: error.message });
   }
 };
+
+exports.checkTitleExists = async (req, res) => {
+    try {
+        const { title } = req.params;
+        
+        if (!title) {
+            return res.status(400).json({ message: 'Title is required' });
+        }
+        
+        const existingCode = await Code.findOne({ title: title.trim() });
+        
+        res.status(200).json({
+            exists: !!existingCode,
+            message: existingCode ? 'Title already exists' : 'Title is available'
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error checking title', error: error.message });
+    }
+};

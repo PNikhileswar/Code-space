@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { getCodeById, saveCode } from '../services/codeService';
+import { getCodeById, saveCode, checkTitleExists } from '../services/codeService';
 import { isAuthenticated } from '../services/authService';
 import './EditorPage.css';
 
@@ -25,8 +25,9 @@ const EditorPage = () => {
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [keyInputValue, setKeyInputValue] = useState('');
   const [protectedFileId, setProtectedFileId] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [originalTitle, setOriginalTitle] = useState('');
 
-  // Fetch code if editing an existing snippet
   useEffect(() => {
     if (id) {
       fetchCode(id, secretKeyFromState);
@@ -39,12 +40,12 @@ const EditorPage = () => {
       const data = await getCodeById(codeId, secretKey);
       setCurrentCode({
         ...data,
-        secretKey: secretKey || '' // Keep the secret key if provided
+        secretKey: secretKey || ''
       });
+      setOriginalTitle(data.title);
     } catch (error) {
       console.error('Error fetching code:', error);
       if (error.response?.status === 403 && error.response?.data?.requiresKey) {
-        // File needs a key - show the popup
         setProtectedFileId(codeId);
         setShowKeyModal(true);
       } else {
@@ -73,7 +74,7 @@ const EditorPage = () => {
     });
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     if (!currentCode.code.trim()) {
       setSaveStatus({
         type: 'error',
@@ -82,7 +83,6 @@ const EditorPage = () => {
       return;
     }
     
-    // Automatically make code public if user tries to save private without being logged in
     if (!isAuthenticated() && currentCode.public === false) {
       setCurrentCode({...currentCode, public: true});
       setSaveStatus({
@@ -93,12 +93,40 @@ const EditorPage = () => {
       return;
     }
     
-    setSaveModal(true);
+    if (!currentCode.title.trim()) {
+      setSaveStatus({
+        type: 'error',
+        message: 'Title cannot be empty'
+      });
+      return;
+    }
+    
+    try {
+      setChecking(true);
+      
+      if (!id || (id && currentCode.title !== originalTitle)) {
+        const titleExists = await checkTitleExists(currentCode.title);
+        if (titleExists) {
+          setSaveStatus({
+            type: 'error',
+            message: 'A code snippet with this title already exists. Please choose a different title.'
+          });
+          setChecking(false);
+          return;
+        }
+      }
+      
+      setChecking(false);
+      setSaveModal(true);
+    } catch (error) {
+      console.error('Error checking title:', error);
+      setChecking(false);
+      setSaveModal(true);
+    }
   };
 
   const handleSaveConfirm = async () => {
     try {
-      // Log token status before saving
       const hasToken = !!localStorage.getItem('token');
       console.log("Token available before save:", hasToken);
       
@@ -107,11 +135,9 @@ const EditorPage = () => {
         title: currentCode.title || 'Untitled Code',
         code: currentCode.code || '',
         language: currentCode.language || 'javascript',
-        // Force public to true if not authenticated
         public: !isAuthenticated() ? true : (currentCode.public === false ? false : true)
       };
       
-      // Only send secret key if needed
       if (!codeToSave.isProtected) {
         delete codeToSave.secretKey;
       }
@@ -121,14 +147,12 @@ const EditorPage = () => {
       const response = await saveCode(codeToSave);
       console.log("Save response:", response);
       
-      // Success handling
       setSaveStatus({
         type: 'success',
         message: id ? 'Code updated successfully!' : 'New code created successfully!',
         id: response.id || id
       });
       
-      // If it's a new file, update URL
       if (!id && response.id) {
         navigate(`/editor/${response.id}`, { replace: true });
       }
@@ -139,7 +163,6 @@ const EditorPage = () => {
       console.error('Response status:', error.response?.status);
       console.error('Response data:', error.response?.data);
       
-      // Error handling with specific messages
       if (error.response?.status === 401) {
         setSaveStatus({
           type: 'error',
@@ -265,8 +288,9 @@ const EditorPage = () => {
           <button
             onClick={handleSaveClick}
             className="save-button"
+            disabled={checking}
           >
-            Save Code
+            {checking ? 'Checking...' : 'Save Code'}
           </button>
         </div>
 
