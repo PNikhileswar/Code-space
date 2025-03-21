@@ -1,4 +1,3 @@
-// Add this new file to debug authentication issues
 exports.logRequest = (req, res, next) => {
   console.log("=== REQUEST DEBUG ===");
   console.log("Path:", req.path);

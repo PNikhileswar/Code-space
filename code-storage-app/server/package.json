@@ -17,7 +17,7 @@
     "nodemailer": "^6.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.22"
   },
   "author": "Your Name",
   "license": "MIT"

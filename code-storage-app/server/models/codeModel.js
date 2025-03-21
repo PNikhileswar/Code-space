@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const codeSchema = new mongoose.Schema({
     title: {
         type: String,
-        default: 'Untitled Code',
-        unique: true, // Add unique constraint
-        trim: true    // Trim whitespace for better uniqueness checks
+        required: true,
+        unique: true,
+        trim: true
     },
     code: {
         type: String,
@@ -18,7 +18,7 @@ const codeSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false // CRITICAL FIX: Remove conditional requirement
+        required: false
     },
     isProtected: {
         type: Boolean,
@@ -37,9 +37,6 @@ const codeSchema = new mongoose.Schema({
         default: true
     }
 });
-
-// Create index for faster lookups
-codeSchema.index({ title: 1 }, { unique: true });
 
 const Code = mongoose.model('Code', codeSchema);
 
